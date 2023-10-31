@@ -56,7 +56,7 @@ fn run() -> Result<()> {
 
     evm.env.tx.caller = caller;
     evm.env.tx.transact_to = TransactTo::Call(address);
-    let sig = "changeSomething(int256)"; // Todo add signautre calculation from rust
+    let _sig = "changeSomething(int256)"; // Todo add signautre calculation from rust
     evm.env.tx.data =
         hex::decode("0x27f12a5f0000000000000000000000000000000000000000000000000000000000000002")?
             .into();
@@ -64,12 +64,15 @@ fn run() -> Result<()> {
     let mut host = DummyHost::new(evm.env.clone());
 
     let mut interpreter = Interpreter::new(contract.into(), gas_limit, is_static);
+    println!("program counter: {:?}", interpreter.program_counter());
+    let result = interpreter.run::<DummyHost, ShanghaiSpec>(&mut host);
+    let return_value = interpreter.return_value();
+    println!("result: {:?}", result);
+    println!("return len: {:?}", interpreter.return_len);
+    println!("return_value: {:?}", return_value);
+    println!("program counter: {:?}", interpreter.program_counter());
 
-    let r = interpreter.run::<DummyHost, ShanghaiSpec>(&mut host);
-
-    println!("r: {:?}", r);
-
-    assert!(r.is_ok());
+    assert!(result.is_ok());
 
     Ok(())
 }
