@@ -1,11 +1,11 @@
-use ethers_solc::Solc;
+use ethers::utils::hex;
+use ethers_solc::{artifacts::Source, CompilerInput, Solc};
 use revm::{
     interpreter::{Contract, DummyHost, Interpreter},
-    primitives::{hex::FromHex, keccak256, BerlinSpec, Bytecode, Bytes, B256, U256},
+    primitives::{keccak256, Bytecode, Bytes, ShanghaiSpec, TransactTo, U256},
     InMemoryDB,
 };
 
-use ethers::prelude::Abigen;
 use eyre::Result;
 
 use revm::primitives::alloy_primitives::address;
@@ -13,16 +13,28 @@ use revm::primitives::alloy_primitives::address;
 fn run() -> Result<()> {
     let mut args = std::env::args();
     args.next().unwrap(); // skip program name
-    let contract_name = args.next().unwrap();
-    let contract: String = args.next().unwrap();
+    let contract_name = args.next().unwrap_or("A".to_string());
+    let contract: String = args
+        .next()
+        .unwrap_or("dev-resources/sample.sol".to_string());
 
-    let contracts = Solc::default().compile_source(&contract)?;
+    let content = std::fs::read_to_string(&contract)?;
+    let source = Source::new(content);
+    let version = Solc::detect_version(&source)?;
+
+    let solc = Solc::blocking_install(&version)?;
+
+    let compile_result = solc.compile_source(&contract)?; // TODO abiv2 directive is broken
+    if compile_result.has_error() {
+        println!("Compile {} failed: {:?}", &contract, compile_result);
+        return Ok(());
+    }
 
     // contract code, jump table, etc.
-    let contract = contracts.get(&contract, &contract_name).unwrap();
-    let bytecode = &contract.bytecode().unwrap().0;
+    let contract = compile_result.get(&contract, &contract_name).unwrap();
+    let bytes = &contract.bytecode().unwrap().0;
 
-    let bytecode = Bytecode::new_raw(Bytes(bytecode.to_owned()));
+    let bytecode = Bytecode::new_raw(Bytes(bytes.to_owned()));
 
     // contract data
     let input = Bytes::new();
@@ -35,7 +47,7 @@ fn run() -> Result<()> {
     let value = U256::from(0);
     // hash of the bytecode
     let hash = keccak256(bytecode.bytes());
-    let contract = Contract::new(input, bytecode, hash, address, caller, value);
+    let contract = Contract::new(input, bytecode.clone(), hash, address, caller, value);
     let gas_limit = u64::MAX;
     let is_static = false;
 
@@ -43,23 +55,23 @@ fn run() -> Result<()> {
     evm.database(InMemoryDB::default());
 
     evm.env.tx.caller = caller;
-    evm.env.tx.transact_to = address;
-    evm.env.tx.data = bytecode;
+    evm.env.tx.transact_to = TransactTo::Call(address);
+    let sig = "changeSomething(int256)"; // Todo add signautre calculation from rust
+    evm.env.tx.data =
+        hex::decode("0x27f12a5f0000000000000000000000000000000000000000000000000000000000000002")?
+            .into();
 
     let mut host = DummyHost::new(evm.env.clone());
-    let instruction_table = make_instruction_table::<DummyHost, BerlinSpec>();
 
     let mut interpreter = Interpreter::new(contract.into(), gas_limit, is_static);
 
-    let r = interpreter.run(&mut host);
+    let r = interpreter.run::<DummyHost, ShanghaiSpec>(&mut host);
 
     println!("r: {:?}", r);
 
-    Ok(())
-}
+    assert!(r.is_ok());
 
-fn make_instruction_table() -> _ {
-    todo!()
+    Ok(())
 }
 
 fn main() {

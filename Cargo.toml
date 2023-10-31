@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-ethers = {versio = "2.0.10", features = ["solc-full"]}
-ethers-solc = "2.0.10"
+ethers = {version = "2.0.10", features = ["solc-full"]}
+ethers-solc = { version = "2.0.10", features = ["svm-solc"]}
 eyre = "0.6.8"
 revm = "3.5.0"
 serde = "1.0.190"
