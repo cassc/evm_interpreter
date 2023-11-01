@@ -1267,7 +1267,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "evm_interpreter"
+name = "evm-interpreter"
 version = "0.1.0"
 dependencies = [
  "clap",
