@@ -31,6 +31,10 @@ struct Cli {
     /// If provided, use the ethtest JSON file the input
     #[clap(long)]
     test_json: Option<String>,
+
+    /// Maximum number of test files to run, valid when using with --test-json
+    #[clap(long, default_value_t = 10)]
+    limit: usize,
 }
 
 fn main() {
@@ -42,7 +46,7 @@ fn main() {
     let results = {
         if let Some(test_json) = cli.test_json {
             let path = Path::new(&test_json);
-            execute_test_suite(&path).unwrap()
+            execute_test_suite(&path, cli.limit).unwrap()
         } else {
             let code = code.expect("Contract code should be provided");
             run_evm(code, input).unwrap()

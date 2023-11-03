@@ -80,8 +80,15 @@ Input: Bytes(0x27f12a5f000000000000000000000000000000000000000000000000000000000
 ID: 608060 ✅ OUTPUT: 0x0000000000000000000000000000000000000000000000000000000000000022
 ```
 
+### Run ethtest json file(s)
 
-### Caveats
+Randomly select
+
+``` bash
+evm-interpreter --test-json dev-resources/ethtest/GeneralStateTests/stSolidityTest/ --pprint --output out.json
+```
+
+## Caveats
 
 When using the `--bytecode` option, because the contract binary is hardcoded to a randomly selected contract address,
 there is no storage initialization, all fields in contract will initially be empty
