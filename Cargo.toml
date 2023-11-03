@@ -10,6 +10,9 @@ clap = { version = "4.4.7",  features = ["derive"]}
 ethers = {version = "2.0.10", features = ["solc-full"]}
 ethers-solc = { version = "2.0.10", features = ["svm-solc"]}
 eyre = "0.6.8"
-revm = {version = "3.5.0", features=[ "serde"] }
+rand = "0.8.5"
+revm = {git="https://github.com/bluealloy/revm", branch="main", features=[ "serde"]}
+revme = {git="https://github.com/bluealloy/revm", branch="main"}
 serde = "1.0.190"
 serde_json = "1.0.107"
+walkdir = "2.4.0"

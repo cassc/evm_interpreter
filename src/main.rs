@@ -1,6 +1,6 @@
-use std::fs;
+use std::{fs, path::Path};
 
-use runner::run_evm;
+use runner::{execute_test_suite, run_evm, ResultWithTrace};
 
 pub mod inspector;
 pub mod runner;
@@ -12,10 +12,12 @@ use serde_json::json;
 struct Cli {
     /// A hex string representing the binary input
     #[clap(long)]
-    bytecode: String,
+    #[clap(long, conflicts_with = "test_json")]
+    bytecode: Option<String>,
 
     /// An optional encoded argument as a hex string
     #[clap(long)]
+    #[clap(long, conflicts_with = "test_json")]
     input: Option<String>,
 
     /// If provided, print to stdout
@@ -25,6 +27,10 @@ struct Cli {
     /// If provided, output as JSON to this file
     #[clap(long)]
     output: Option<String>,
+
+    /// If provided, use the JSON file as test case input
+    #[clap(long)]
+    test_json: Option<String>,
 }
 
 fn main() {
@@ -33,25 +39,40 @@ fn main() {
     let code = cli.bytecode;
     let input = cli.input;
 
-    match run_evm(code, input) {
-        Ok((success, output, traces)) => {
-            if cli.pprint {
-                traces.iter().for_each(|trace| {
-                    trace.pprint();
-                });
-            }
-
-            println!("{} OUTPUT: {}", if success { "✅" } else { "❌" }, output);
-
-            if let Some(output_path) = &cli.output {
-                let output_data = json!({
-                    "success": success,
-                    "traces": traces,
-                    "output": output,
-                });
-                fs::write(output_path, output_data.to_string()).expect("Unable to write to file");
-            }
+    let results = {
+        if let Some(test_json) = cli.test_json {
+            let path = Path::new(&test_json);
+            execute_test_suite(&path).unwrap()
+        } else {
+            let code = code.expect("Contract code should be provided");
+            run_evm(code, input).unwrap()
         }
-        Err(e) => panic!("Error: {:?}", e),
+    };
+
+    for ResultWithTrace {
+        id,
+        success,
+        output,
+        traces,
+    } in results.iter()
+    {
+        if cli.pprint {
+            traces.iter().for_each(|trace| {
+                trace.pprint();
+            });
+        }
+
+        println!(
+            "ID: {} {} OUTPUT: {}",
+            id,
+            if *success { "✅" } else { "❌" },
+            output
+        );
+        println!();
+    }
+
+    if let Some(output_path) = &cli.output {
+        let output_data = json!({"results": results});
+        fs::write(output_path, output_data.to_string()).expect("Unable to write to file");
     }
 }

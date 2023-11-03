@@ -1,5 +1,5 @@
 use revm::{
-    interpreter::{InstructionResult, Interpreter, Stack, OPCODE_JUMPMAP},
+    interpreter::{ Interpreter, Stack, OPCODE_JUMPMAP},
     Database, EVMData, Inspector,
 };
 use serde::Serialize;
@@ -31,20 +31,10 @@ impl<DB> Inspector<DB> for TraceInspector<'_>
 where
     DB: Database,
 {
-    fn step(&mut self, interp: &mut Interpreter, _data: &mut EVMData<'_, DB>) -> InstructionResult {
+    fn step(&mut self, interp: &mut Interpreter, _data: &mut EVMData<'_, DB>) {
         let pc = interp.program_counter();
         let opcode = interp.current_opcode();
         let stack = interp.stack.clone();
         self.traces.push(Trace { pc, opcode, stack });
-        InstructionResult::Continue
-    }
-
-    fn step_end(
-        &mut self,
-        _interp: &mut Interpreter,
-        _data: &mut EVMData<'_, DB>,
-        _eval: InstructionResult,
-    ) -> InstructionResult {
-        InstructionResult::Continue
     }
 }
