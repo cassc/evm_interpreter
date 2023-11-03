@@ -10,17 +10,17 @@ use serde_json::json;
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Cli {
-    /// A hex string representing the binary input
+    /// A hex string representing a contract runtime binary code
     #[clap(long)]
     #[clap(long, conflicts_with = "test_json")]
     bytecode: Option<String>,
 
-    /// An optional encoded argument as a hex string
+    /// An optional hex encoded transaction data
     #[clap(long)]
     #[clap(long, conflicts_with = "test_json")]
     input: Option<String>,
 
-    /// If provided, print to stdout
+    /// If provided, print stack traces to stdout
     #[clap(long)]
     pprint: bool,
 
@@ -28,7 +28,7 @@ struct Cli {
     #[clap(long)]
     output: Option<String>,
 
-    /// If provided, use the JSON file as test case input
+    /// If provided, use the ethtest JSON file the input
     #[clap(long)]
     test_json: Option<String>,
 }
