@@ -94,4 +94,4 @@ When using the `--bytecode` option, because the contract binary is hardcoded to 
 there is no storage initialization, all fields in contract will initially be empty
 (zero value).
 
-> When using the `--test-json` option, the initial state will be set using the `pre` field in the ethtest json file.
+> When using the `--test-json` option, the initial state will be set using the `pre` field in the ethtest json file. For example, https://github.com/cassc/evm_interpreter/blob/main/dev-resources/ethtest/GeneralStateTests/stRandom/randomStatetest0.json#L99-L121
