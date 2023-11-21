@@ -14,26 +14,36 @@ cargo install --path .
 
 ## Usage
 
+### Execute a transaction
+
 ```bash
-❯ evm-interpreter -h
-Usage: evm-interpreter [OPTIONS]
+❯ evm-interpreter execute -h
+Usage: evm-interpreter execute [OPTIONS]
 
 Options:
       --bytecode <BYTECODE>    A hex string representing a contract runtime binary code
       --input <INPUT>          An optional hex encoded transaction data
       --pprint                 If provided, print stack traces to stdout
       --output <OUTPUT>        If provided, output as JSON to this file
-      --test-json <TEST_JSON>  If provided, use the ethtest JSON file the input
+      --test-json <TEST_JSON>  If provided, use the ethtest JSON file as the input
+      --limit <LIMIT>          Maximum number of test files to run, valid when using with --test-json [default: 10]
   -h, --help                   Print help
-  -V, --version                Print version
+
 ```
+
+### Compare with CuEVM
+
+```bash
+❯ evm-interpreter compare --executable path_to_cuevm_interpreter --test-json dev-resources/ethtest/GeneralStateTests/VMTests/vmArithmeticTest/arith.json
+```
+
 
 ## Examples
 
 ### Call contract with no input (zero length transaction)
 
 ``` bash
-❯ evm-interpreter --bytecode 604260005260206000F3 --pprint
+❯ evm-interpreter execute --bytecode 604260005260206000F3 --pprint
 Input: Bytes(0x)
 Output: Bytes(0x0000000000000000000000000000000000000000000000000000000000000042)
 ➡️ PC: 0     OPCODE: 0x60 PUSH1

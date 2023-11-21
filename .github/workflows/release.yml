@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    name: Build and publish binaries
+
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+
+    - uses: actions/checkout@v3                 # Git toolchain to check out code
+
+    - uses: actions-rs/toolchain@v1             # Rust toolchain
+      with:
+        toolchain: 1.73.0
+
+    - name: Get OS infomration
+      id: os
+      run: echo "KERNEL=$(uname -r)" >> $GITHUB_OUTPUT
+
+    - uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.tinyevm/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ runner.os }}-${{steps.os.outputs.KERNEL}}-${{ hashFiles('**/Cargo.toml') }}
+
+    - name: Build with file system cache
+      run: |
+        cargo build --release
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: target/release/evm-interpreter
+        overwrite: true
