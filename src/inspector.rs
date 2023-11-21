@@ -1,5 +1,5 @@
 use revm::{
-    interpreter::{ Interpreter, Stack, OPCODE_JUMPMAP},
+    interpreter::{Interpreter, Stack, OPCODE_JUMPMAP},
     Database, EVMData, Inspector,
 };
 use serde::Serialize;
