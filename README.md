@@ -6,6 +6,10 @@
 - Rust
 - Cargo
 
+## Download
+
+Prebuilt binaries are available for Ubuntu 22.04 at [release page](https://github.com/cassc/evm_interpreter/releases).
+
 ## Installation
 
 ```bash
@@ -92,10 +96,25 @@ ID: 608060 ✅ OUTPUT: 0x0000000000000000000000000000000000000000000000000000000
 
 ### Run ethtest json file(s)
 
-Randomly select
+``` bash
+❯ evm-interpreter compare -h
+Compares the output of two EVM interpreters
+
+Usage: evm-interpreter compare [OPTIONS] --executable <EXECUTABLE> --test-json <TEST_JSON>
+
+Options:
+      --executable <EXECUTABLE>  Path to another EVM interpreter executable
+      --test-json <TEST_JSON>    A path which contains ethtest JSON files
+      --pprint                   If provided, print stack traces to stdout
+      --limit <LIMIT>            Maximum number of test files to run, valid when using with --test-json [default: 10]
+      --failfast                 Fail on the first mismatch
+  -h, --help                     Print help
+```
+
+Randomly select 10 testcases to run
 
 ``` bash
-evm-interpreter --test-json dev-resources/ethtest/GeneralStateTests/stSolidityTest/ --pprint --output out.json
+
 ```
 
 ## Caveats

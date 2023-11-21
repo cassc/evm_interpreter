@@ -157,14 +157,14 @@ fn compare_evms(
             "Comparing {} Passed? {}",
             json_file.display(),
             if let Err(e) = &r {
-                format!("❌ {:?}", e)
+                format!("❌ {:?}", e.to_string())
             } else {
                 "✅".to_string()
             }
         );
 
         if failfast && r.is_err() {
-            panic!("Failfast is enabled, exiting");
+            std::process::exit(1);
         }
     });
 }
