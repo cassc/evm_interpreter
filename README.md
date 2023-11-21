@@ -14,6 +14,8 @@ cargo install --path .
 
 ## Usage
 
+### Execute a transaction
+
 ```bash
 ❯ evm-interpreter execute -h
 Usage: evm-interpreter execute [OPTIONS]
@@ -28,6 +30,13 @@ Options:
   -h, --help                   Print help
 
 ```
+
+### Compare with CuEVM
+
+```bash
+❯ evm-interpreter compare --executable path_to_cuevm_interpreter --test-json dev-resources/ethtest/GeneralStateTests/VMTests/vmArithmeticTest/arith.json
+```
+
 
 ## Examples
 
