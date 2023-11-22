@@ -114,7 +114,7 @@ Options:
 Randomly select 10 testcases to run
 
 ``` bash
-
+❯ evm-interpreter compare --executable path-to-CuEVM-cpu_interpreter --test-json dev-resources/ethtest/GeneralStateTests/VMTests/vmArithmeticTest/
 ```
 
 ## Caveats
