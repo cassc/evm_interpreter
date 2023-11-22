@@ -3033,7 +3033,7 @@ dependencies = [
 [[package]]
 name = "revm"
 version = "3.5.0"
-source = "git+https://github.com/bluealloy/revm?branch=main#1609e07c68048909ad1682c98cf2b9baa76310b5"
+source = "git+https://github.com/bluealloy/revm?rev=1609e07c68048909ad1682c98cf2b9baa76310b5#1609e07c68048909ad1682c98cf2b9baa76310b5"
 dependencies = [
  "auto_impl",
  "ethers-core",
@@ -3049,7 +3049,7 @@ dependencies = [
 [[package]]
 name = "revm-interpreter"
 version = "1.3.0"
-source = "git+https://github.com/bluealloy/revm?branch=main#1609e07c68048909ad1682c98cf2b9baa76310b5"
+source = "git+https://github.com/bluealloy/revm?rev=1609e07c68048909ad1682c98cf2b9baa76310b5#1609e07c68048909ad1682c98cf2b9baa76310b5"
 dependencies = [
  "revm-primitives",
  "serde",
@@ -3058,7 +3058,7 @@ dependencies = [
 [[package]]
 name = "revm-precompile"
 version = "2.2.0"
-source = "git+https://github.com/bluealloy/revm?branch=main#1609e07c68048909ad1682c98cf2b9baa76310b5"
+source = "git+https://github.com/bluealloy/revm?rev=1609e07c68048909ad1682c98cf2b9baa76310b5#1609e07c68048909ad1682c98cf2b9baa76310b5"
 dependencies = [
  "aurora-engine-modexp",
  "c-kzg",
@@ -3074,7 +3074,7 @@ dependencies = [
 [[package]]
 name = "revm-primitives"
 version = "1.3.0"
-source = "git+https://github.com/bluealloy/revm?branch=main#1609e07c68048909ad1682c98cf2b9baa76310b5"
+source = "git+https://github.com/bluealloy/revm?rev=1609e07c68048909ad1682c98cf2b9baa76310b5#1609e07c68048909ad1682c98cf2b9baa76310b5"
 dependencies = [
  "alloy-primitives",
  "alloy-rlp",
@@ -3093,7 +3093,7 @@ dependencies = [
 [[package]]
 name = "revme"
 version = "0.2.0"
-source = "git+https://github.com/bluealloy/revm?branch=main#1609e07c68048909ad1682c98cf2b9baa76310b5"
+source = "git+https://github.com/bluealloy/revm?rev=1609e07c68048909ad1682c98cf2b9baa76310b5#1609e07c68048909ad1682c98cf2b9baa76310b5"
 dependencies = [
  "alloy-rlp",
  "hash-db",
