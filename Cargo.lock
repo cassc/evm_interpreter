@@ -1479,7 +1479,7 @@ dependencies = [
 
 [[package]]
 name = "evm-interpreter"
-version = "1.0.0+2023112201"
+version = "1.0.0+2023112204"
 dependencies = [
  "clap 4.4.7",
  "ethers",
