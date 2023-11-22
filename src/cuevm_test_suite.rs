@@ -3,6 +3,25 @@ use std::collections::BTreeMap;
 use revm::primitives::{Address, Bytes, HashMap, B256, U256};
 use serde::{de, Deserialize};
 
+#[derive(Debug, PartialEq, Eq, Deserialize, Hash, Clone)]
+pub struct BytesAddress(Bytes);
+
+impl From<BytesAddress> for Address {
+    fn from(val: BytesAddress) -> Self {
+        let bytes = val.0;
+        let padded = {
+            if bytes.len() < 20 {
+                let mut padded = vec![0; 20];
+                padded[20 - bytes.len()..].copy_from_slice(&bytes);
+                padded
+            } else {
+                bytes.to_vec()
+            }
+        };
+        Address::from_slice(&padded)
+    }
+}
+
 pub fn deserialize_str_as_u64<'de, D>(deserializer: D) -> Result<u64, D::Error>
 where
     D: de::Deserializer<'de>,
@@ -32,12 +51,10 @@ where
             } else {
                 stripped.to_owned()
             }
+        } else if is_odd {
+            format!("0{}", string)
         } else {
-            if is_odd {
-                format!("0{}", string)
-            } else {
-                string.to_owned()
-            }
+            string.to_owned()
         }
     };
 
@@ -62,7 +79,7 @@ pub struct AccountInfo {
 #[derive(Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Env {
-    pub current_coinbase: Address,
+    pub current_coinbase: BytesAddress,
     pub current_difficulty: U256,
     pub current_gas_limit: U256,
     pub current_number: U256,
@@ -81,7 +98,7 @@ pub struct Env {
 #[derive(Debug, PartialEq, Eq, Deserialize)]
 pub struct CuEvmTestUnit {
     pub env: Env,
-    pub pre: HashMap<Address, AccountInfo>,
+    pub pre: HashMap<BytesAddress, AccountInfo>,
     pub post: Vec<CuEvmTest>,
 }
 
@@ -98,11 +115,11 @@ pub struct CuEvmTest {
 #[derive(Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CuEvmMsg {
-    pub sender: Address,
+    pub sender: BytesAddress,
     pub value: U256,
-    pub to: Option<Address>,
+    pub to: Option<BytesAddress>,
     pub nonce: U256,
-    pub origin: Address,
+    pub origin: BytesAddress,
     pub gas_price: Option<U256>,
     pub gas_limit: U256,
     pub data: Bytes,
@@ -111,7 +128,7 @@ pub struct CuEvmMsg {
 #[derive(Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CuEvmTrace {
-    pub address: Address,
+    pub address: BytesAddress,
     pub pc: usize,
     pub opcode: u8,
     pub stack: CuEvmStack,
