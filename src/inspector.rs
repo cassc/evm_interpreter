@@ -42,7 +42,7 @@ impl Trace {
     pub fn pprint(&self) {
         let readable_opcode = OPCODE_JUMPMAP.get(self.opcode as usize).unwrap().unwrap();
         println!(
-            "➡️ PC: {:<5} OPCODE: 0x{:02x} {} GAS_USED: {}, GAS_MEMORY: {}",
+            "➡️ PC: {:<5} OPCODE: 0x{:02x} {:<8} GAS_USED: {:<12} GAS_MEMORY: {:<8}",
             self.pc, self.opcode, readable_opcode, self.gas.used, self.gas.memory
         );
         println!("  STACK: {}", self.stack);
