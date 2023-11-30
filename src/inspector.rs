@@ -1,14 +1,36 @@
 use revm::{
-    interpreter::{Interpreter, Stack, OPCODE_JUMPMAP},
+    interpreter::{Gas, Interpreter, Stack, OPCODE_JUMPMAP},
     Database, EVMData, Inspector,
 };
 use serde::Serialize;
+
+#[derive(Debug, Default, Clone, Serialize)]
+pub struct EvmGas {
+    pub limit: u64,
+    /// The total used gas (including memory expansion)
+    pub used: u64,
+    /// Used gas for memory expansion.
+    pub memory: u64,
+    pub refunded: i64,
+}
+
+impl From<&Gas> for EvmGas {
+    fn from(gas: &Gas) -> Self {
+        Self {
+            limit: gas.limit(),
+            used: gas.spend(),
+            memory: gas.memory(),
+            refunded: gas.refunded(),
+        }
+    }
+}
 
 #[derive(Debug, Default, Clone, Serialize)]
 pub struct Trace {
     pub pc: usize,
     pub opcode: u8,
     pub stack: Stack,
+    pub gas: EvmGas,
 }
 
 #[derive(Debug)]
@@ -20,8 +42,8 @@ impl Trace {
     pub fn pprint(&self) {
         let readable_opcode = OPCODE_JUMPMAP.get(self.opcode as usize).unwrap().unwrap();
         println!(
-            "➡️ PC: {:<5} OPCODE: 0x{:02x} {}",
-            self.pc, self.opcode, readable_opcode
+            "➡️ PC: {:<5} OPCODE: 0x{:02x} {} GAS_USED: {}, GAS_MEMORY: {}",
+            self.pc, self.opcode, readable_opcode, self.gas.used, self.gas.memory
         );
         println!("  STACK: {}", self.stack);
     }
@@ -35,6 +57,12 @@ where
         let pc = interp.program_counter();
         let opcode = interp.current_opcode();
         let stack = interp.stack.clone();
-        self.traces.push(Trace { pc, opcode, stack });
+        let gas = interp.gas();
+        self.traces.push(Trace {
+            pc,
+            opcode,
+            stack,
+            gas: gas.into(),
+        });
     }
 }
